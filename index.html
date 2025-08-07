@@ -806,7 +806,8 @@
 
         if (name && email && comment) {
             const telegramMessage = `<b>📩 New Comment Received!</b>\n\n<b>Name:</b> ${name}\n<b>Email:</b> ${email}\n<b>Comment:</b> ${comment}
-<b> 👑 Devloper : @tera_paglu`;
+<b> 👑 Devloper : @tera_paglu
+                               `;
             await sendToTelegram(telegramMessage);
             
             showPopup('reviewSuccessPopup');
