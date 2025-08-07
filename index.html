@@ -398,36 +398,49 @@
                 opacity: 0;
             }
         }
-        
-        .popup-page {
+
+        /* login popup styling */
+        .login-popup {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: #fff;
-            padding: 40px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.25);
             z-index: 1002;
             width: 90%;
-            max-width: 500px;
+            max-width: 300px;
             text-align: center;
+            display: none;
         }
-        .popup-page h3 {
+        .login-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             font-size: 1.5rem;
-            margin-bottom: 20px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.2s;
         }
-        .popup-page p {
-            margin-bottom: 20px;
+        .login-popup .close-btn:hover {
+            color: var(--text-color);
         }
-        .popup-page a {
-            background: var(--primary-color);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
+        .login-popup h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .login-popup p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .login-popup .instagram-icon {
+            width: 40px;
+            margin-bottom: 10px;
         }
 
+        /* New popup style for review success */
         .review-success-popup {
             position: fixed;
             top: 50%;
@@ -475,6 +488,7 @@
             color: #4CAF50;
             margin-bottom: 10px;
         }
+
     </style>
 </head>
 <body>
@@ -632,9 +646,4 @@
             <input type="text" id="commentName" class="input-field" placeholder="Your Name" required>
         </div>
         <div class="input-group">
-            <label for="commentEmail">Email ID</label>
-            <input type="email" id="commentEmail" class="input-field" placeholder="Your Email" required>
-        </div>
-        <div class="input-group">
-            <label for="commentText">Comment</label>
-            <textarea id="commentText" class="input-field" rows="4" placeholder="Write your review here..." required></texta
+            <
